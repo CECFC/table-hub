@@ -18,18 +18,20 @@ RCSwitch transmitSwitch = RCSwitch();
 const int RECEIVER_INTERRUPT = 0; // This is pin #2 on the Arduino Uno
 const int TRANSMITTER_PIN = 10;
 const int BIT_LENGTH = 24; //how many bits to send (used for binary zero padding)
+const int LED_PIN = 13;
 
 // Key Codes
 const int MASTER_UP_CODE = 6532833;
 const int MASTER_DOWN_CODE = 6532834;
 
 const long WAIT_TIME = 500; // How long to wait in between sending codes in milliseconds
+const long STATE_WAIT_TIME = 15000; // How long before repeating the raise/lower task
 
-const int TRANSMIT_ITERATIONS = 2; // How many times to transmit up/down codes
+const int TRANSMIT_ITERATIONS = 3; // How many times to transmit up/down codes
 
 // Down button code = Up button code + 1
 unsigned long int codes[]={ //stores the transmitter up button codes
-  //6532833, 
+  6532833, 
   13806609,
   10427409,
   15956497,
@@ -66,7 +68,9 @@ void setup() {
     // Get number of codes
     numCodes = sizeof(codes) / sizeof(codes[0]);
 
-    Serial.println("Booting up...\nLISTENING...");
+    pinMode(LED_PIN, OUTPUT);
+
+    Serial.println("Booted up.\nLISTENING...");
 }
 
 void loop() {
@@ -84,27 +88,40 @@ void loop() {
         break;
         case State::TRANSMIT_UP:
             for (int j = 0; j < TRANSMIT_ITERATIONS; j++) {
-                Serial.println("----- TRANSMITTING UP CODES -----");
+                Serial.print("----- TRANSMITTING UP CODES (");
+                Serial.print(j+1);
+                Serial.print("/");
+                Serial.print(TRANSMIT_ITERATIONS);
+                Serial.println(") -----");
+
                 for (int i = 0; i < numCodes; i++) {
                     sendCode(codes[i]);
+                    // Toggle LED
+                    digitalWrite(LED_PIN, !digitalRead(LED_PIN));
                     delay(WAIT_TIME);
                 }
-                Serial.println("------------- DONE --------------");
-                delay(5000);
+                delay(STATE_WAIT_TIME);
             }
+            Serial.println("------------- DONE --------------");
             Serial.println("LISTENING...");
             state = State::LISTENING;
         break;
         case State::TRANSMIT_DOWN:
             for (int j = 0; j < TRANSMIT_ITERATIONS; j++) {
-                Serial.println("---- TRANSMITTING DOWN CODES ----");
+                Serial.print("---- TRANSMITTING DOWN CODES (");
+                Serial.print(j+1);
+                Serial.print("/");
+                Serial.print(TRANSMIT_ITERATIONS);
+                Serial.println(") ----");
                 for (int i = 0; i < numCodes; i++) {
                     sendCode(codes[i] + 1);
+                    // Toggle LED
+                    digitalWrite(LED_PIN, !digitalRead(LED_PIN));
                     delay(WAIT_TIME);
                 }
-                Serial.println("------------- DONE --------------");
-                delay(5000);
+                delay(STATE_WAIT_TIME);
             }
+            Serial.println("------------- DONE --------------");
             Serial.println("LISTENING...");
             state = State::LISTENING;
         break;
