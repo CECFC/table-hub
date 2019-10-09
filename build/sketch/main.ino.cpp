@@ -1,3 +1,6 @@
+#include <Arduino.h>
+#line 1 "/Users/bransoncamp/Arduino/table-hub/main.ino"
+#line 1 "/Users/bransoncamp/Arduino/table-hub/main.ino"
 /*
 table-hub
 Created by Branson Camp for CECFC on 2019-10-1
@@ -54,6 +57,17 @@ enum State {
     TRANSMIT_DOWN,
 } state = State::LISTENING;
 
+#line 57 "/Users/bransoncamp/Arduino/table-hub/main.ino"
+void sendCode(unsigned long int code);
+#line 61 "/Users/bransoncamp/Arduino/table-hub/main.ino"
+void setup();
+#line 71 "/Users/bransoncamp/Arduino/table-hub/main.ino"
+void loop();
+#line 57 "/Users/bransoncamp/Arduino/table-hub/main.ino"
+void sendCode(unsigned long int code) {
+    transmitSwitch.send(code, BIT_LENGTH);
+}
+
 void setup() {
     Serial.begin(9600);
     receiveSwitch.enableReceive(RECEIVER_INTERRUPT); // Set up reciever 
@@ -81,29 +95,15 @@ void loop() {
         break;
         case State::TRANSMIT_UP:
         case State::TRANSMIT_DOWN:
-			int codeFlag;
-			if (state == TRANSMIT_UP) {
-				codeFlag = 0;
-				Serial.println("---- Transmitting up codes ----");		
-			} else {
-				codeFlag = 1;
-				Serial.println("---- Transmitting down codes ----");		
-			}
-
             for (int j = 0; j < TRANSMIT_ITERATIONS; j++) {
-				Serial.print("--- Iteration ");
-				Serial.print(j+1);
-				Serial.print("/");
-				Serial.print(TRANSMIT_ITERATIONS);
-				Serial.println(" ---");
                 for (int i = 0; i < numCodes; i++) {
-					unsigned long int code = codes[i] + codeFlag;
+					// Send the code
+					unsigned long int code = codes[i] + 1;
 					transmitSwitch.send(code, BIT_LENGTH);
 					Serial.print("[code] ");
 					Serial.println(code);		
                     delay(WAIT_TIME);
                 }
-				Serial.println("Waiting...")
                 delay(REPEAT_WAIT_TIME);
             }
             state = State::LISTENING;
@@ -112,3 +112,4 @@ void loop() {
         break;
     }
 }
+

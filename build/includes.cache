@@ -1,0 +1,27 @@
+[
+  {
+    "Sourcefile": "",
+    "Include": "",
+    "Includepath": "/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino"
+  },
+  {
+    "Sourcefile": "",
+    "Include": "",
+    "Includepath": "/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/variants/standard"
+  },
+  {
+    "Sourcefile": "/Users/bransoncamp/Arduino/table-hub/build/sketch/main.ino.cpp",
+    "Include": "RCSwitch.h",
+    "Includepath": "/Users/bransoncamp/Documents/Arduino/libraries/rc-switch-2.6.2"
+  },
+  {
+    "Sourcefile": "/Users/bransoncamp/Arduino/table-hub/build/sketch/main.ino.cpp",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "/Users/bransoncamp/Documents/Arduino/libraries/rc-switch-2.6.2/RCSwitch.cpp",
+    "Include": "",
+    "Includepath": ""
+  }
+]

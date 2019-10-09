@@ -1,3 +1,5 @@
+# 1 "/Users/bransoncamp/Arduino/table-hub/main.ino"
+# 1 "/Users/bransoncamp/Arduino/table-hub/main.ino"
 /*
 table-hub
 Created by Branson Camp for CECFC on 2019-10-1
@@ -8,7 +10,7 @@ UP CODE: 6532833
 DOWN CODE: 6532834
 */
 
-#include <RCSwitch.h>
+# 12 "/Users/bransoncamp/Arduino/table-hub/main.ino" 2
 
 // Switches
 RCSwitch receiveSwitch = RCSwitch();
@@ -31,7 +33,7 @@ const int TRANSMIT_ITERATIONS = 3; // How many times to repeat transmit of up/do
 
 // Down button code = Up button code + 1
 unsigned long int codes[]={ //stores the transmitter up button codes
-  6532833, 
+  6532833,
   13806609,
   10427409,
   15956497,
@@ -54,14 +56,18 @@ enum State {
     TRANSMIT_DOWN,
 } state = State::LISTENING;
 
+void sendCode(unsigned long int code) {
+    transmitSwitch.send(code, BIT_LENGTH);
+}
+
 void setup() {
     Serial.begin(9600);
     receiveSwitch.enableReceive(RECEIVER_INTERRUPT); // Set up reciever 
     transmitSwitch.enableTransmit(TRANSMITTER_PIN); // Set up transmitter
     numCodes = sizeof(codes) / sizeof(codes[0]); // Get number of codes
-    pinMode(LED_PIN, OUTPUT); // Set up on-board LED pin
-	Serial.println("Setup complete");
-	Serial.println("Listening...");
+    pinMode(LED_PIN, 0x1); // Set up on-board LED pin
+ Serial.println("Setup complete");
+ Serial.println("Listening...");
 }
 
 void loop() {
@@ -71,43 +77,29 @@ void loop() {
                 int value = receiveSwitch.getReceivedValue();
                 if (value == MASTER_UP_CODE) {
                     state = State::TRANSMIT_UP;
-					Serial.println("Transmitting up codes");
+     Serial.println("Transmitting up codes");
                 } else if (value == MASTER_DOWN_CODE) {
                     state = State::TRANSMIT_DOWN;
-					Serial.println("Transmitting down codes");
+     Serial.println("Transmitting down codes");
                 }
                 receiveSwitch.resetAvailable();
             }
         break;
         case State::TRANSMIT_UP:
         case State::TRANSMIT_DOWN:
-			int codeFlag;
-			if (state == TRANSMIT_UP) {
-				codeFlag = 0;
-				Serial.println("---- Transmitting up codes ----");		
-			} else {
-				codeFlag = 1;
-				Serial.println("---- Transmitting down codes ----");		
-			}
-
             for (int j = 0; j < TRANSMIT_ITERATIONS; j++) {
-				Serial.print("--- Iteration ");
-				Serial.print(j+1);
-				Serial.print("/");
-				Serial.print(TRANSMIT_ITERATIONS);
-				Serial.println(" ---");
                 for (int i = 0; i < numCodes; i++) {
-					unsigned long int code = codes[i] + codeFlag;
-					transmitSwitch.send(code, BIT_LENGTH);
-					Serial.print("[code] ");
-					Serial.println(code);		
+     // Send the code
+     unsigned long int code = codes[i] + 1;
+     transmitSwitch.send(code, BIT_LENGTH);
+     Serial.print("[code] ");
+     Serial.println(code);
                     delay(WAIT_TIME);
                 }
-				Serial.println("Waiting...")
                 delay(REPEAT_WAIT_TIME);
             }
             state = State::LISTENING;
-			Serial.println("Listening...");
+   Serial.println("Listening...");
 
         break;
     }
