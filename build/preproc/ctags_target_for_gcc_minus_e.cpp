@@ -2,6 +2,8 @@
 # 1 "/Users/bransoncamp/Arduino/table-hub/main.ino"
 # 2 "/Users/bransoncamp/Arduino/table-hub/main.ino" 2
 
+typedef unsigned long int Code;
+
 // Switches
 RCSwitch receiveSwitch = RCSwitch();
 RCSwitch transmitSwitch = RCSwitch();
@@ -13,14 +15,13 @@ const int BIT_LENGTH = 24;
 const int LED_PIN = 13; // Onboard LED pin
 
 // Key Codes
-const int MASTER_UP_CODE = 6532833;
-const int MASTER_DOWN_CODE = 6532834;
+Code MASTER_UP_CODE = 6532833;
+Code MASTER_DOWN_CODE = 6532834;
 
 const long CODE_WAIT_TIME = 500;
 
 const int codeNum = 12;
 
-typedef unsigned long int Code;
 
 // Up codes for each desk (1-12)
 // Down code = Up code + 1
